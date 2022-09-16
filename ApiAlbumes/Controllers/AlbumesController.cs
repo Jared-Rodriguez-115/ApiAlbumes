@@ -1,20 +1,46 @@
 ﻿using ApiAlbumes.Entidades;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiAlbumes.Controllers
 {
     [ApiController]
     [Route("albumes")]
-    public class AlbumesController: ControllerBase
+    public class AlbumesController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<List<Album>> Get()
+        private readonly ApplicationDbContext dbContext;
+
+        public AlbumesController(ApplicationDbContext dbContext)
         {
-            return new List<Album>()
-            {
-                new Album() {Id=1, Nombre="Pet Sounds", Artista="The Beach Boys", Año=1966, Duracion="35:57 minutos"},
-                new Album() {Id=2, Nombre="Revolver", Artista="The Beatles", Año=1966, Duracion="35:01 minutos"}
-            };
+            this.dbContext = dbContext;
         }
+
+        [HttpGet]
+        public async Task<ActionResult<List<Album>>> Get()
+        {
+            return await dbContext.Albumes.ToListAsync();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Post(Album album)
+        {
+            dbContext.Add(album);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(Album album, int id)
+        {
+            if(album.Id != id)
+            {
+                return BadRequest("El id del album no coincide con el establecido en la url.");
+            }
+
+            dbContext.Update(album);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }
