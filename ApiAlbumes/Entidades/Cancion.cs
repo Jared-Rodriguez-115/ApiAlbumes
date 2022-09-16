@@ -1,18 +1,18 @@
 ﻿namespace ApiAlbumes.Entidades
 {
-    public class Album
+    public class Cancion
     {
+
         public int Id { get; set; }
 
         public string Nombre { get; set; }
 
-        public string Artista { get; set; }
-
-        public int Año { get; set; }
+        public string Compositor { get; set; }
 
         public string Duracion { get; set; }
 
-        public List<Cancion> Canciones { get; set; }
+        public string AlbumId { get; set; }
 
+        public Album Album { get; set; }
     }
 }

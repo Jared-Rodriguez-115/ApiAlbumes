@@ -11,5 +11,7 @@ namespace ApiAlbumes
         }
 
         public DbSet<Album> Albumes { get; set; }
+
+        public DbSet<Cancion> Canciones { get; set; }
     }
 }
