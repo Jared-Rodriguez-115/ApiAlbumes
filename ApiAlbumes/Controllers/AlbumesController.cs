@@ -42,5 +42,23 @@ namespace ApiAlbumes.Controllers
             return Ok();
         }
 
+        [HttpDelete("{id:int}")]
+
+        public async Task<ActionResult> Delete(int id)
+        {
+            var exist = await dbContext.Albumes.AnyAsync(x => x.Id == id);
+            if (!exist)
+            {
+                return NotFound();
+            }
+
+            dbContext.Remove(new Album()
+            {
+                Id = id
+            });
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }
