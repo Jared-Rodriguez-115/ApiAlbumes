@@ -30,5 +30,22 @@ namespace ApiAlbumes.Controllers
         {
             return await dbContext.Canciones.FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        [HttpPost]
+
+        public async Task<ActionResult> Post(Cancion cancion)
+        {
+            var existeAlbum = await dbContext.Albumes.AnyAsync(x => x.Id == cancion.AlbumId);
+
+            if (!existeAlbum)
+            {
+                return BadRequest($"No existe el album con el id: {cancion.AlbumId}");
+            }
+
+            dbContext.Add(cancion);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+
+        }
     }
 }

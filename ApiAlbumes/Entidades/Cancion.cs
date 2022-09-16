@@ -11,7 +11,7 @@
 
         public string Duracion { get; set; }
 
-        public string AlbumId { get; set; }
+        public int AlbumId { get; set; }
 
         public Album Album { get; set; }
     }
