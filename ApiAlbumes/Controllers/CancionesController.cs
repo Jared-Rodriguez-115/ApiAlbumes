@@ -47,5 +47,42 @@ namespace ApiAlbumes.Controllers
             return Ok();
 
         }
+
+        [HttpPut("{id:int}")]
+
+        public async Task<ActionResult> Put(Cancion cancion, int id)
+        {
+            var exist = await dbContext.Canciones.AnyAsync(x => x.Id == id);
+
+            if (!exist)
+            {
+                return NotFound("La cancion especificada no existe.");
+            }
+
+            if(cancion.Id != id)
+            {
+                return BadRequest("El id de la cancion no coincide con el establecido en la url.");
+            }
+
+            dbContext.Update(cancion);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}")]
+
+        public async Task<ActionResult> Delete(int id)
+        {
+            var exist = await dbContext.Canciones.AnyAsync(x => x.Id == id);
+
+            if (!exist)
+            {
+                return NotFound("El recurso no fue encontrado.");
+            }
+
+            dbContext.Remove(new Cancion { Id = id });
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
