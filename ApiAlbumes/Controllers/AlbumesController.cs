@@ -18,7 +18,7 @@ namespace ApiAlbumes.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Album>>> Get()
         {
-            return await dbContext.Albumes.ToListAsync();
+            return await dbContext.Albumes.Include(x => x.Canciones).ToListAsync();
         }
 
         [HttpPost]
