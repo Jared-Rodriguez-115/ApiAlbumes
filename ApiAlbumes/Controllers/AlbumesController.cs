@@ -16,10 +16,47 @@ namespace ApiAlbumes.Controllers
         }
 
         [HttpGet]
+    
         public async Task<ActionResult<List<Album>>> Get()
         {
             return await dbContext.Albumes.Include(x => x.Canciones).ToListAsync();
         }
+
+        [HttpGet("primero")]
+
+        public async Task<ActionResult<Album>> PrimerAlbum()
+        {
+            return await dbContext.Albumes.FirstOrDefaultAsync();
+        }
+
+        [HttpGet("{id:int}")]
+
+        public async Task<ActionResult<Album>> Get(int id)
+        {
+           var album = await dbContext.Albumes.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(album == null)
+            {
+                return NotFound();
+            }
+
+            return album;
+        }
+
+        [HttpGet("{nombre}")]
+
+        public async Task<ActionResult<Album>> Get(string nombre)
+        {
+            var album = await dbContext.Albumes.FirstOrDefaultAsync(x => x.Nombre.Contains(nombre));
+
+            if (album == null)
+            {
+                return NotFound();
+            }
+
+            return album;
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> Post(Album album)
