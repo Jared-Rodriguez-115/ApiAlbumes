@@ -15,23 +15,25 @@ namespace ApiAlbumes.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet]
+        [HttpGet] // /albumes
+        [HttpGet("listado")] //albumes/listado
+        [HttpGet("/listado")] // /listado
     
         public async Task<ActionResult<List<Album>>> Get()
         {
             return await dbContext.Albumes.Include(x => x.Canciones).ToListAsync();
         }
 
-        [HttpGet("primero")]
+        [HttpGet("primero")] //albumes/primero
 
-        public async Task<ActionResult<Album>> PrimerAlbum()
+        public async Task<ActionResult<Album>> PrimerAlbum([FromHeader] int valor, [FromQuery] string album, [FromQuery] int albumId)
         {
             return await dbContext.Albumes.FirstOrDefaultAsync();
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}/{param=Pet Sounds}")] //albumes/(id)
 
-        public async Task<ActionResult<Album>> Get(int id)
+        public async Task<ActionResult<Album>> Get(int id, string param)
         {
            var album = await dbContext.Albumes.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -43,9 +45,9 @@ namespace ApiAlbumes.Controllers
             return album;
         }
 
-        [HttpGet("{nombre}")]
+        [HttpGet("{nombre}")] //albumes/(nombre)
 
-        public async Task<ActionResult<Album>> Get(string nombre)
+        public async Task<ActionResult<Album>> Get([FromRoute]string nombre)
         {
             var album = await dbContext.Albumes.FirstOrDefaultAsync(x => x.Nombre.Contains(nombre));
 
@@ -59,7 +61,7 @@ namespace ApiAlbumes.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> Post(Album album)
+        public async Task<ActionResult> Post([FromBody] Album album)
         {
             dbContext.Add(album);
             await dbContext.SaveChangesAsync();
