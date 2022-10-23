@@ -1,6 +1,10 @@
 ﻿using ApiAlbumes.Entidades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using ApiAlbumes.Services;
+using ApiAlbumes.Filtros;
+
 
 namespace ApiAlbumes.Controllers
 {
@@ -9,7 +13,7 @@ namespace ApiAlbumes.Controllers
     public class AlbumesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
-
+        
         public AlbumesController(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
