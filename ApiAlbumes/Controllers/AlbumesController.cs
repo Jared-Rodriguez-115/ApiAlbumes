@@ -63,6 +63,14 @@ namespace ApiAlbumes.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] Album album)
         {
+
+            var existeAlbumMismoNombre = await dbContext.Albumes.AnyAsync(x => x.Nombre == album.Nombre);
+
+            if (existeAlbumMismoNombre)
+            {
+                return BadRequest("Ya existe un album con el mismo nombre");
+            }
+
             dbContext.Add(album);
             await dbContext.SaveChangesAsync();
             return Ok();
