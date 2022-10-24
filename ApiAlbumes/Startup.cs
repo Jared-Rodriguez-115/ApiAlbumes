@@ -65,8 +65,6 @@ namespace ApiAlbumes
 
             app.UseRouting();
 
-            app.UseResponseCaching();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
