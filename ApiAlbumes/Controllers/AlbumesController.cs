@@ -13,10 +13,22 @@ namespace ApiAlbumes.Controllers
     public class AlbumesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IService service;
+        private readonly ServiceTransient serviceTransient;
+        private readonly ServiceScoped serviceScoped;
+        private readonly ServiceSingleton serviceSingleton;
+        private readonly ILogger<AlbumesController> logger;
         
-        public AlbumesController(ApplicationDbContext dbContext)
+        public AlbumesController(ApplicationDbContext dbContext, IService service,
+            ServiceTransient serviceTransient, ServiceScoped serviceScoped,
+            ServiceSingleton serviceSingleton, ILogger<AlbumesController> logger)
         {
             this.dbContext = dbContext;
+            this.service = service;
+            this.serviceTransient = serviceTransient;
+            this.serviceScoped = serviceScoped;
+            this.serviceSingleton = serviceSingleton;
+            this.logger = logger;
         }
 
         [HttpGet] // /albumes
@@ -25,6 +37,9 @@ namespace ApiAlbumes.Controllers
     
         public async Task<ActionResult<List<Album>>> Get()
         {
+            logger.LogInformation("Se obtiene el listado de albumes");
+            logger.LogWarning("Mensaje de prueba Warning");
+            service.EjecutarJob();
             return await dbContext.Albumes.Include(x => x.Canciones).ToListAsync();
         }
 
