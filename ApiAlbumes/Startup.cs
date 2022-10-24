@@ -46,13 +46,13 @@ namespace ApiAlbumes
 
             app.UseResponseHttpMiddleware();
 
-            app.Map("/maping", app =>
-            {
-                app.Run(async context =>
-                {
-                    await context.Response.WriteAsync("Interceptando las peticiones");
-                });
-            });
+            //app.Map("/maping", app =>
+            //{
+             //   app.Run(async context =>
+             //   {
+              //      await context.Response.WriteAsync("Interceptando las peticiones");
+              //  });
+           // });
 
             // Configure the HTTP request pipeline.
             if (env.IsDevelopment())

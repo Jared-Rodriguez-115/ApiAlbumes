@@ -18,10 +18,12 @@ namespace ApiAlbumes.Controllers
         private readonly ServiceScoped serviceScoped;
         private readonly ServiceSingleton serviceSingleton;
         private readonly ILogger<AlbumesController> logger;
+        private readonly IWebHostEnvironment env;
         
         public AlbumesController(ApplicationDbContext dbContext, IService service,
             ServiceTransient serviceTransient, ServiceScoped serviceScoped,
-            ServiceSingleton serviceSingleton, ILogger<AlbumesController> logger)
+            ServiceSingleton serviceSingleton, ILogger<AlbumesController> logger,
+            IWebHostEnvironment env)
         {
             this.dbContext = dbContext;
             this.service = service;
@@ -29,6 +31,22 @@ namespace ApiAlbumes.Controllers
             this.serviceScoped = serviceScoped;
             this.serviceSingleton = serviceSingleton;
             this.logger = logger;
+            this.env = env;
+        }
+
+        [HttpGet("GUID")]
+
+        public ActionResult ObtenerGuid()
+        {
+            return Ok(new
+            {
+                AlbumesControllerTransient = serviceTransient.guid,
+                ServiceA_Transient = service.GetTransient(),
+                AlbumesControllerScoped = serviceScoped.guid,
+                ServiceA_Scoped = service.GetScoped(),
+                AlbumesControllerSingleton = serviceSingleton.guid,
+                ServiceA_Singleton = service.GetSingleton()
+            });
         }
 
         [HttpGet] // /albumes
