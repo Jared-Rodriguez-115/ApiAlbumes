@@ -35,9 +35,12 @@ namespace ApiAlbumes.Controllers
         }
 
         [HttpGet("GUID")]
-
+        [ResponseCache(Duration = 10)]
+        [ServiceFilter(typeof(FiltroDeAccion))]
         public ActionResult ObtenerGuid()
         {
+            throw new NotImplementedException();
+            logger.LogInformation("Durante la ejecucion");
             return Ok(new
             {
                 AlbumesControllerTransient = serviceTransient.guid,
@@ -52,9 +55,13 @@ namespace ApiAlbumes.Controllers
         [HttpGet] // /albumes
         [HttpGet("listado")] //albumes/listado
         [HttpGet("/listado")] // /listado
+        //[ResponseCache(Duration = 15)]
+        //[Authorize]
+        //[ServiceFilter(typeof(FiltroDeAccion))]
     
         public async Task<ActionResult<List<Album>>> Get()
         {
+            throw new NotImplementedException();
             logger.LogInformation("Se obtiene el listado de albumes");
             logger.LogWarning("Mensaje de prueba Warning");
             service.EjecutarJob();

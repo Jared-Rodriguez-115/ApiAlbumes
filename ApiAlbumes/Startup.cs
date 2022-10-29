@@ -22,9 +22,13 @@ namespace ApiAlbumes
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(x =>
+            services.AddControllers(opciones =>
+            {
+                opciones.Filters.Add(typeof(FiltroDeExcepcion));
+            }).AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+            //Se encarga de configurar el ApplicationDbContext como un servicio
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,6 +38,10 @@ namespace ApiAlbumes
             services.AddScoped<ServiceScoped>();
             services.AddSingleton<ServiceSingleton>();
             services.AddTransient<FiltroDeAccion>();
+            services.AddHostedService<EscribirEnArchivo>();
+            services.AddResponseCaching();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
@@ -43,16 +51,17 @@ namespace ApiAlbumes
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-
+            //Metodo para utilizar el Middleware sin exponer la clase.
             app.UseResponseHttpMiddleware();
 
-            //app.Map("/maping", app =>
-            //{
-             //   app.Run(async context =>
-             //   {
-              //      await context.Response.WriteAsync("Interceptando las peticiones");
-              //  });
-           // });
+            //Agregamos rutas especificas para nuestro Middleware por medio de Map.
+            app.Map("/maping", app =>
+            {
+                app.Run(async context =>
+                {
+                    await context.Response.WriteAsync("Interceptando las peticiones");
+                });
+            });
 
             // Configure the HTTP request pipeline.
             if (env.IsDevelopment())
@@ -64,6 +73,8 @@ namespace ApiAlbumes
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 
