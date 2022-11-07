@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using ApiAlbumes.Services;
+using ApiAlbumes.DTOs
 using ApiAlbumes.Filtros;
 
 
@@ -34,31 +34,8 @@ namespace ApiAlbumes.Controllers
             this.env = env;
         }
 
-        [HttpGet("GUID")]
-        [ResponseCache(Duration = 10)]
-        [ServiceFilter(typeof(FiltroDeAccion))]
-        public ActionResult ObtenerGuid()
-        {
-            throw new NotImplementedException();
-            logger.LogInformation("Durante la ejecucion");
-            return Ok(new
-            {
-                AlbumesControllerTransient = serviceTransient.guid,
-                ServiceA_Transient = service.GetTransient(),
-                AlbumesControllerScoped = serviceScoped.guid,
-                ServiceA_Scoped = service.GetScoped(),
-                AlbumesControllerSingleton = serviceSingleton.guid,
-                ServiceA_Singleton = service.GetSingleton()
-            });
-        }
 
         [HttpGet] // /albumes
-        [HttpGet("listado")] //albumes/listado
-        [HttpGet("/listado")] // /listado
-        //[ResponseCache(Duration = 15)]
-        //[Authorize]
-        //[ServiceFilter(typeof(FiltroDeAccion))]
-    
         public async Task<ActionResult<List<Album>>> Get()
         {
             throw new NotImplementedException();
