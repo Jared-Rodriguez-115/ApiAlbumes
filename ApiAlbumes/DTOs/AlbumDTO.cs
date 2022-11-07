@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ApiAlbumes.Validaciones;
 
-
-namespace ApiAlbumes.Entidades
+namespace ApiAlbumes.DTOs
 {
-    public class Album 
+    public class AlbumDTO
     {
-        public int Id { get; set; }
-
-
-        [Required(ErrorMessage = "El campo {0} es requerido obligatoriamente")]
-        [StringLength(maximumLength:10, ErrorMessage = "El campo {0} solo puede tener 10 caracteres")]
+        [Required(ErrorMessage = "El campo {0} es requerido")]
+        [StringLength(maximumLength: 150, ErrorMessage = "El campo {0} solo puede tener hasta 150 caracteres")]
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido obligatoriamente")]
@@ -24,6 +20,5 @@ namespace ApiAlbumes.Entidades
         [Required(ErrorMessage = "El campo {0} es requerido obligatoriamente")]
         [StringLength(maximumLength: 5, ErrorMessage = "El campo {0} solo puede tener 5 caracteres")]
         public string Duracion { get; set; }
-
     }
 }

@@ -35,12 +35,12 @@ namespace ApiAlbumes.Controllers
 
         public async Task<ActionResult> Post(Cancion cancion)
         {
-            var existeAlbum = await dbContext.Albumes.AnyAsync(x => x.Id == cancion.AlbumId);
+            //var existeAlbum = await dbContext.Albumes.AnyAsync(x => x.Id == cancion.AlbumId);
 
-            if (!existeAlbum)
-            {
-                return BadRequest($"No existe el album con el id: {cancion.AlbumId}");
-            }
+            //if (!existeAlbum)
+            //{
+            //    return BadRequest($"No existe el album con el id: {cancion.AlbumId}");
+            //}
 
             dbContext.Add(cancion);
             await dbContext.SaveChangesAsync();

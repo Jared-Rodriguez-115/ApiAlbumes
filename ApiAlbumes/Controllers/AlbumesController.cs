@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using ApiAlbumes.DTOs
+using ApiAlbumes.DTOs;
 using ApiAlbumes.Filtros;
+using AutoMapper;
 
 
 namespace ApiAlbumes.Controllers
@@ -13,84 +14,59 @@ namespace ApiAlbumes.Controllers
     public class AlbumesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly IService service;
-        private readonly ServiceTransient serviceTransient;
-        private readonly ServiceScoped serviceScoped;
-        private readonly ServiceSingleton serviceSingleton;
-        private readonly ILogger<AlbumesController> logger;
-        private readonly IWebHostEnvironment env;
+        private readonly IMapper mapper;
         
-        public AlbumesController(ApplicationDbContext dbContext, IService service,
-            ServiceTransient serviceTransient, ServiceScoped serviceScoped,
-            ServiceSingleton serviceSingleton, ILogger<AlbumesController> logger,
-            IWebHostEnvironment env)
+        public AlbumesController(ApplicationDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
-            this.service = service;
-            this.serviceTransient = serviceTransient;
-            this.serviceScoped = serviceScoped;
-            this.serviceSingleton = serviceSingleton;
-            this.logger = logger;
-            this.env = env;
+            this.mapper = mapper;
         }
+
 
 
         [HttpGet] // /albumes
-        public async Task<ActionResult<List<Album>>> Get()
+        public async Task<ActionResult<List<GetAlbumDTO>>> Get()
         {
-            throw new NotImplementedException();
-            logger.LogInformation("Se obtiene el listado de albumes");
-            logger.LogWarning("Mensaje de prueba Warning");
-            service.EjecutarJob();
-            return await dbContext.Albumes.Include(x => x.Canciones).ToListAsync();
+            var albumes = await dbContext.Albumes.ToListAsync();
+            return mapper.Map<List<GetAlbumDTO>>(albumes);
         }
 
-        [HttpGet("primero")] //albumes/primero
+        [HttpGet("{id:int}")] //albumes/(id)
 
-        public async Task<ActionResult<Album>> PrimerAlbum([FromHeader] int valor, [FromQuery] string album, [FromQuery] int albumId)
+        public async Task<ActionResult<GetAlbumDTO>> Get(int id)
         {
-            return await dbContext.Albumes.FirstOrDefaultAsync();
-        }
-
-        [HttpGet("{id:int}/{param=Pet Sounds}")] //albumes/(id)
-
-        public async Task<ActionResult<Album>> Get(int id, string param)
-        {
-           var album = await dbContext.Albumes.FirstOrDefaultAsync(x => x.Id == id);
+           var album = await dbContext.Albumes.FirstOrDefaultAsync(albumBD => albumBD.Id == id);
 
             if(album == null)
             {
                 return NotFound();
             }
 
-            return album;
+            return mapper.Map<GetAlbumDTO>(album);
         }
 
         [HttpGet("{nombre}")] //albumes/(nombre)
 
-        public async Task<ActionResult<Album>> Get([FromRoute]string nombre)
+        public async Task<ActionResult<List<GetAlbumDTO>>> Get([FromRoute]string nombre)
         {
-            var album = await dbContext.Albumes.FirstOrDefaultAsync(x => x.Nombre.Contains(nombre));
+            var albumes = await dbContext.Albumes.Where(albumBD => albumBD.Nombre.Contains(nombre)).ToListAsync();
 
-            if (album == null)
-            {
-                return NotFound();
-            }
-
-            return album;
+            return mapper.Map <List<GetAlbumDTO>>(albumes);
         }
 
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Album album)
+        public async Task<ActionResult> Post([FromBody] AlbumDTO albumDto)
         {
 
-            var existeAlbumMismoNombre = await dbContext.Albumes.AnyAsync(x => x.Nombre == album.Nombre);
+            var existeAlbumMismoNombre = await dbContext.Albumes.AnyAsync(x => x.Nombre == albumDto.Nombre);
 
             if (existeAlbumMismoNombre)
             {
-                return BadRequest("Ya existe un album con el mismo nombre");
+                return BadRequest($"Ya existe un album con el nombre {albumDto.Nombre}");
             }
+
+            var album = mapper.Map<Album>(albumDto);
 
             dbContext.Add(album);
             await dbContext.SaveChangesAsync();
@@ -100,6 +76,13 @@ namespace ApiAlbumes.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(Album album, int id)
         {
+            var exist = await dbContext.Albumes.AnyAsync(x => x.Id == id);
+
+            if (!exist)
+            {
+                return NotFound();
+            }
+
             if(album.Id != id)
             {
                 return BadRequest("El id del album no coincide con el establecido en la url.");
@@ -117,7 +100,7 @@ namespace ApiAlbumes.Controllers
             var exist = await dbContext.Albumes.AnyAsync(x => x.Id == id);
             if (!exist)
             {
-                return NotFound();
+                return NotFound("El recursos no fue encontrado");
             }
 
             dbContext.Remove(new Album()
